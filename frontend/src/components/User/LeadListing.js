@@ -4,11 +4,13 @@ import { AuthContext } from '../../context/AuthContext';
 import LeadHistoryModalUser from './LeadHistoryModalUser';
 
 function LeadListing() {
-  const { token, user } = useContext(AuthContext);
+  const { token } = useContext(AuthContext);
+  const user = localStorage.getItem('id');
   const [leads, setLeads] = useState([]);
   const [users, setUsers] = useState([]);
   const [error, setError] = useState('');
   const [selectedLead, setSelectedLead] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -67,6 +69,9 @@ function LeadListing() {
     setSelectedLead(null);
   };
 
+  console.log(user)
+
+
   return (
     <div className="bg-white p-6 rounded-lg shadow">
       <h2 className="text-3xl font-bold mb-4">Lead Listing</h2>
@@ -103,14 +108,14 @@ function LeadListing() {
         </tbody>
       </table>
       {selectedLead && (
-        <LeadHistoryModalUser
-          lead={selectedLead}
-          onClose={closeHistoryModal}
-          users={users}
-          currentUserId={users.id}
-          onUpdateLead={updateLead}
-        />
-      )}
+  <LeadHistoryModalUser
+    lead={selectedLead}
+    onClose={closeHistoryModal}
+    users={users}
+    currentUserId={user}
+    onUpdateLead={updateLead}
+  />
+)}
     </div>
   );
 }

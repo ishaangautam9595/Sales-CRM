@@ -153,4 +153,29 @@ router.get('/assigned/:userId', authMiddleware, async (req, res) => {
   }
 });
 
+// Update a specific statusHistory entry's description
+router.put('/:leadId/history/:historyId', authMiddleware, async (req, res) => {
+  const { leadId, historyId } = req.params;
+  const { description } = req.body;
+  try {
+    const lead = await Lead.findById(leadId);
+    if (!lead) return res.status(404).json({ message: 'Lead not found' });
+
+    const history = lead.statusHistory.id(historyId);
+    if (!history) return res.status(404).json({ message: 'History entry not found' });
+
+    // Optionally: Only allow assigned user or admin to edit
+    if (req.user.role !== 'admin' && lead.assignedTo?.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Unauthorized' });
+    }
+
+    history.description = description;
+    await lead.save();
+
+    res.json({ message: 'History description updated', lead });
+  } catch (error) {
+    res.status(500).json({ message: 'Error updating history description', error: error.message });
+  }
+});
+
 module.exports = router;

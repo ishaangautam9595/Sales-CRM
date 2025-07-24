@@ -4,10 +4,12 @@ function LeadHistoryModal({ lead, onClose, users, onUpdateHistory }) {
   const [editingHistoryId, setEditingHistoryId] = useState(null);
   const [editedDescription, setEditedDescription] = useState('');
 
-  const getUsername = (userId) => {
-    const user = users.find((u) => u._id === userId);
-    return user ? user.username : 'Unknown';
-  };
+ const getUsername = (assignedTo) => {
+  if (!assignedTo) return 'Unassigned';
+  if (typeof assignedTo === 'object' && assignedTo.username) return assignedTo.username;
+  const user = users.find((u) => u._id === assignedTo || u._id === assignedTo?._id);
+  return user ? user.username : 'Unknown';
+};
 
   const startEditing = (history) => {
     setEditingHistoryId(history._id);
